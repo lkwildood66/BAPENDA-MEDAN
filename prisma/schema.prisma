@@ -336,3 +336,19 @@ model TaxAssessment {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 }
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String?
+  role      String?
+  message   String   @db.Text
+  sender    String   // USER or BOT
+  createdAt DateTime @default(now())
+}
+
+model ChatSession {
+  id        String   @id @default(cuid())
+  userId    String?
+  startedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

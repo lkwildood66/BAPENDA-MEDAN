@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 import { constructMetadata } from "@/lib/metadata";
 import { StickyBottomNav } from "@/components/StickyBottomNav";
 import { AccessibilityWidget } from "@/components/AccessibilityWidget";
+import { ChatbotWidget } from "@/components/ChatbotWidget";
 
 
 export const metadata = constructMetadata();
@@ -35,6 +36,7 @@ export default async function RootLayout({
         <Providers session={session}>
           {children}
           <AccessibilityWidget />
+          <ChatbotWidget />
 
           <StickyBottomNav />
         </Providers>
