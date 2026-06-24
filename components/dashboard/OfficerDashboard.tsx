@@ -88,67 +88,59 @@ export const OfficerDashboard = ({ session }: { session: Session }) => {
   }
 
   return (
-    <div className="space-y-16 animate-in fade-in slide-in-from-bottom-6 duration-1000 pb-20 selection:bg-primary/20 text-left">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-1000 pb-20 selection:bg-primary/20 text-left bg-[#F8FAFC]">
       
       {/* ── Officer Operational Hub ── */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-         <div className="lg:col-span-8 relative bg-white border border-zinc-100 rounded-[5rem] p-12 md:p-24 overflow-hidden group shadow-2xl shadow-primary/5 min-h-[480px] flex flex-col justify-center">
-            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] group-hover:scale-110 transition-transform duration-1000" />
-            <div className="relative z-10 space-y-12 text-left">
-               <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/10 shadow-inner group-hover:rotate-12 transition-transform">
-                     <ShieldCheck className="w-6 h-6 text-primary" />
-                  </div>
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.5em] italic">Petugas Lapangan Terverifikasi</p>
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+         <div className="lg:col-span-8 relative bg-white border border-zinc-150 rounded-[2rem] p-8 md:p-12 overflow-hidden group shadow-sm min-h-[180px] max-h-[280px] flex flex-col justify-center">
+            <div className="relative z-10 space-y-4 text-left">
+               <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 bg-primary rounded-full animate-pulse" />
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] italic">Selamat Datang, {session?.user?.name ?? "Petugas"}</p>
                </div>
-               <div className="space-y-6">
-                  <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter leading-none text-foreground uppercase italic underline decoration-primary/10 decoration-8 underline-offset-8">Unit Reaksi <br /> <span className="text-primary italic font-black">Fiskal.</span></h1>
-                  <p className="text-xl text-muted-foreground font-medium italic border-l-4 border-primary/20 pl-10 leading-relaxed max-w-2xl">
-                     &quot;Halo, {session?.user?.name}. Pantau penugasan lapangan, validasi objek pajak secara real-time, dan optimalkan koordinasi operasional melalui pusat komando digital Bapenda Medan.&quot;
+               <div className="space-y-2">
+                  <h1 className="text-3xl md:text-5xl font-black italic tracking-tighter leading-none text-foreground uppercase">Dashboard <span className="text-primary italic font-black">Petugas Pajak.</span></h1>
+                  <p className="text-sm text-muted-foreground font-medium border-l-4 border-primary/20 pl-6 leading-relaxed max-w-2xl">
+                     Kelola data objek pajak dan proses pengajuan masyarakat dengan lebih mudah.
                   </p>
-               </div>
-               <div className="flex flex-wrap gap-4 pt-4">
-                  <Link href="/dashboard/admin/payments" className="btn-premium px-12 h-20 rounded-full font-black uppercase text-xs tracking-widest shadow-2xl shadow-primary/30 flex items-center gap-4 group">
-                     Buka Monitoring Kas <ArrowRight className="ml-4 w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                  </Link>
                </div>
             </div>
          </div>
 
-         <div className="lg:col-span-4 grid grid-cols-1 gap-6">
-            <StatsCard label="Pending Task PPID" value={stats?.ppidCount ?? 0} icon={FileQuestion} color="blue" />
-            <StatsCard label="Pending Pengaduan" value={stats?.complaintCount ?? 0} icon={Megaphone} color="amber" />
-            <StatsCard label="Awaiting Research" value={stats?.researchCount ?? 0} icon={GraduationCap} color="emerald" />
+         <div className="lg:col-span-4 grid grid-cols-1 gap-4">
+            <StatsCard label="Permohonan PPID" value={stats?.ppidCount ?? 0} icon={FileQuestion} color="blue" />
+            <StatsCard label="Pengaduan Masuk" value={stats?.complaintCount ?? 0} icon={Megaphone} color="amber" />
+            <StatsCard label="Riset Mahasiswa" value={stats?.researchCount ?? 0} icon={GraduationCap} color="emerald" />
          </div>
       </section>
 
       {/* ── Operational Intelligence ── */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-10">
          <div className="lg:col-span-8">
-            <Card padding="none" variant="elevated" className="bg-white border-zinc-100 rounded-[5rem] overflow-hidden shadow-2xl shadow-primary/5 p-12 md:p-20 relative min-h-[500px] text-left">
-               <div className="flex items-center justify-between mb-16 border-b border-zinc-50 pb-8">
-                  <div className="space-y-3">
-                     <h2 className="text-3xl font-black italic tracking-tighter uppercase italic leading-none">Aktivitas <span className="text-primary">Sistem.</span></h2>
-                     <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest italic leading-none">Audit Trail Performance Log</p>
+            <Card padding="md" className="bg-white border border-zinc-150 rounded-[1.5rem] overflow-hidden shadow-sm p-6 md:p-10 relative min-h-[400px] text-left">
+               <div className="flex items-center justify-between mb-8 border-b border-zinc-50 pb-4">
+                  <div className="space-y-1">
+                     <h2 className="text-xl font-black uppercase leading-none">Aktivitas Terbaru</h2>
+                     <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider leading-none">Riwayat verifikasi objek dan pengajuan terbaru</p>
                   </div>
-                  <History className="w-10 h-10 text-primary/20" />
+                  <History className="w-6 h-6 text-primary/30" />
                </div>
                
-               <div className="space-y-8">
+               <div className="space-y-6">
                   {activities.length === 0 ? (
-                    <div className="py-20 text-center opacity-30 italic font-black uppercase tracking-widest text-zinc-300">Belum Ada Aktivitas Sistem Terbaru.</div>
+                    <div className="py-16 text-center opacity-30 italic font-bold text-zinc-300">Belum ada aktivitas terbaru.</div>
                   ) : activities.map((act) => (
-                    <div key={act.id} className="flex items-center gap-8 group/act transition-all">
-                       <div className="w-14 h-14 bg-zinc-50 rounded-2xl border border-zinc-100 flex items-center justify-center text-zinc-400 group-hover/act:bg-primary group-hover/act:text-white transition-all shadow-inner">
-                          <Zap className="w-6 h-6" />
+                    <div key={act.id} className="flex items-center gap-6 group/act transition-all">
+                       <div className="w-10 h-10 bg-zinc-50 rounded-xl border border-zinc-100 flex items-center justify-center text-zinc-400 group-hover/act:bg-primary group-hover/act:text-white transition-all shadow-inner">
+                          <Zap className="w-4 h-4" />
                        </div>
-                       <div className="flex-1 space-y-1">
-                          <p className="text-[10px] font-black uppercase text-primary italic leading-none tracking-widest">{act.action.replace(/_/g, ' ')}</p>
-                          <h4 className="text-lg font-black italic tracking-tighter uppercase group-hover/act:translate-x-1 transition-transform italic leading-none">{act.table} Node Audit</h4>
-                          <p className="text-xs text-muted-foreground font-medium italic">Executor: {act.user.name}</p>
+                       <div className="flex-1 space-y-0.5">
+                          <p className="text-[9px] font-bold uppercase text-primary leading-none tracking-wide">{act.action.replace(/_/g, ' ')}</p>
+                          <h4 className="text-sm font-bold text-zinc-800 leading-none">Pembaruan data pada {act.table}</h4>
+                          <p className="text-[10px] text-muted-foreground font-medium">Petugas: {act.user.name}</p>
                        </div>
                        <div className="text-right">
-                          <p className="text-[10px] font-black text-zinc-300 uppercase italic flex items-center gap-2"><Clock className="w-3 h-3" /> {new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-[9px] font-bold text-zinc-300 uppercase flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                        </div>
                     </div>
                   ))}
@@ -156,31 +148,31 @@ export const OfficerDashboard = ({ session }: { session: Session }) => {
             </Card>
          </div>
 
-         <div className="lg:col-span-4 flex flex-col gap-10">
-            <Card padding="lg" className="bg-zinc-50 border-zinc-100 rounded-[5rem] shadow-inner p-12 space-y-10 group text-left">
-               <h3 className="text-xl font-black italic tracking-tighter uppercase italic border-l-4 border-primary pl-6">Dispatch <br/> Portal.</h3>
-               <div className="grid grid-cols-1 gap-4">
-                  <DispatchLink href="/dashboard/ppid" label="Review PPID" icon={FileQuestion} />
-                  <DispatchLink href="/dashboard/pengaduan" label="Pusat Pengaduan" icon={Megaphone} />
+         <div className="lg:col-span-4 flex flex-col gap-6">
+            <Card padding="md" className="bg-zinc-50 border border-zinc-150 rounded-[1.5rem] p-6 space-y-6 group text-left">
+               <h3 className="text-lg font-black uppercase border-l-4 border-primary pl-4">Portal Layanan</h3>
+               <div className="grid grid-cols-1 gap-3">
+                  <DispatchLink href="/dashboard/ppid" label="Ulas PPID" icon={FileQuestion} />
+                  <DispatchLink href="/dashboard/pengaduan" label="Pengaduan" icon={Megaphone} />
                   <DispatchLink href="/dashboard/admin/tax-objects" label="Validasi Aset" icon={Building2} />
                   <DispatchLink href="/dashboard/admin/research" label="Validasi Riset" icon={GraduationCap} />
                </div>
             </Card>
 
-            <Card padding="lg" variant="elevated" className="bg-white border-zinc-50 rounded-[4rem] p-12 shadow-2xl shadow-primary/5 space-y-8 group text-left">
-               <div className="flex items-center gap-4 text-primary">
-                  <Megaphone className="w-6 h-6" />
-                  <h3 className="text-lg font-black italic tracking-tighter uppercase italic">Bulletin.</h3>
+            <Card padding="md" className="bg-white border border-zinc-150 rounded-[1.5rem] p-6 shadow-sm space-y-6 group text-left">
+               <div className="flex items-center gap-3 text-primary">
+                  <Megaphone className="w-5 h-5" />
+                  <h3 className="text-sm font-black uppercase">Bulletin Informasi</h3>
                </div>
-               <div className="space-y-6">
+               <div className="space-y-4">
                   {announcements.map(ann => (
-                     <div key={ann.id} className="space-y-1 border-l-2 border-zinc-100 pl-4 group-hover:border-primary transition-colors">
-                        <p className="text-[9px] font-black uppercase text-zinc-400 italic">INTERNAL • {ann.category}</p>
-                        <h5 className="text-sm font-black italic tracking-tight uppercase italic line-clamp-1">{ann.title}</h5>
+                     <div key={ann.id} className="space-y-1 border-l-2 border-zinc-100 pl-3 group-hover:border-primary transition-colors">
+                        <p className="text-[9px] font-bold uppercase text-zinc-400">{ann.category}</p>
+                        <h5 className="text-xs font-bold text-zinc-800 line-clamp-1">{ann.title}</h5>
                      </div>
                   ))}
                </div>
-               <Button variant="ghost" className="w-full justify-between font-black uppercase text-[10px] tracking-widest italic group-hover:text-primary p-0">Lihat Semua →</Button>
+               <Button variant="ghost" className="w-full justify-between font-bold uppercase text-[9px] tracking-wider italic p-0 hover:text-primary">Lihat Semua →</Button>
             </Card>
          </div>
       </section>
@@ -195,13 +187,13 @@ function StatsCard({ label, value, icon: Icon, color }: { label: string; value: 
       emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
    };
    return (
-      <Card padding="lg" className="bg-white border-zinc-50 rounded-[3rem] shadow-xl shadow-primary/[0.03] flex items-center justify-between group hover:border-primary/20 transition-all text-left">
-         <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase text-zinc-400 tracking-widest italic leading-none">{label}</p>
-            <h4 className="text-4xl font-black italic tracking-tighter text-foreground italic leading-none">{value}</h4>
+      <Card padding="md" className="bg-white border border-zinc-150 rounded-[1.5rem] shadow-sm flex items-center justify-between group transition-all text-left">
+         <div className="space-y-1">
+            <p className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider leading-none">{label}</p>
+            <h4 className="text-2xl font-black text-foreground leading-none">{value}</h4>
          </div>
-         <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center border shadow-inner group-hover:rotate-12 transition-transform", colors[color])}>
-            <Icon className="w-6 h-6" />
+         <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center border shadow-inner group-hover:rotate-6 transition-transform", colors[color])}>
+            <Icon className="w-5 h-5" />
          </div>
       </Card>
    );
@@ -209,12 +201,12 @@ function StatsCard({ label, value, icon: Icon, color }: { label: string; value: 
 
 function DispatchLink({ href, label, icon: Icon }: { href: string; label: string; icon: React.ElementType }) {
    return (
-      <Link href={href} className="flex items-center justify-between p-6 bg-white border border-zinc-100 rounded-[2rem] hover:bg-primary group/link transition-all hover:shadow-2xl hover:shadow-primary/20 shadow-sm">
-         <div className="flex items-center gap-4">
-            <Icon className="w-5 h-5 text-zinc-400 group-hover/link:text-white transition-colors" />
-            <span className="text-[10px] font-black uppercase tracking-widest group-hover/link:text-white transition-colors italic">{label}</span>
+      <Link href={href} className="flex items-center justify-between p-4 bg-white border border-zinc-100 rounded-xl hover:bg-primary group/link transition-all shadow-sm">
+         <div className="flex items-center gap-3">
+            <Icon className="w-4 h-4 text-zinc-400 group-hover/link:text-white transition-colors" />
+            <span className="text-[10px] font-bold uppercase tracking-wider group-hover/link:text-white transition-colors">{label}</span>
          </div>
-         <ArrowRight className="w-4 h-4 text-zinc-200 group-hover/link:text-white group-hover/link:translate-x-1 transition-all" />
+         <ArrowRight className="w-3.5 h-3.5 text-zinc-300 group-hover/link:text-white group-hover/link:translate-x-1 transition-all" />
       </Link>
    );
 }

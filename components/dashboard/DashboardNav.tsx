@@ -48,21 +48,17 @@ export const DashboardSidebar = () => {
   const role = (session?.user as { role: string })?.role ?? "USER";
 
   const getNavItems = (): NavItem[] => {
-    const base = [
-      { href: "/dashboard", label: "Ringkasan", icon: BarChart3 },
-    ];
-
     if (role === "ADMIN") {
       return [
-        ...base,
-        { href: "/dashboard/admin/users", label: "Manajemen User", icon: Users },
-        { href: "/dashboard/admin/tax-objects", label: "Daftar Objek Pajak", icon: Building2 },
-        { href: "/dashboard/admin/sppt", label: "Penerbitan SPPT", icon: FileText },
-        { href: "/dashboard/admin/submissions", label: "Dokumentasi Pengajuan", icon: ShieldCheck },
-        { href: "/dashboard/admin/payments", label: "Monitoring Kas", icon: CreditCard },
-        { href: "/dashboard/admin/stats", label: "Statistik Pajak", icon: BarChart3 },
-        { href: "/dashboard/admin/audit", label: "Audit Log Sistem", icon: ShieldCheck },
-        { href: "/dashboard/admin/announcements", label: "Pengumuman", icon: Megaphone },
+        { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
+        { href: "/dashboard/admin/users", label: "Pengguna", icon: Users },
+        { href: "/dashboard/admin/tax-objects", label: "Objek Pajak", icon: Building2 },
+        { href: "/dashboard/admin/sppt", label: "SPPT", icon: FileText },
+        { href: "/dashboard/admin/submissions", label: "Pengajuan", icon: ShieldCheck },
+        { href: "/dashboard/admin/payments", label: "Pembayaran", icon: CreditCard },
+        { href: "/dashboard/admin/stats", label: "Statistik", icon: BarChart3 },
+        { href: "/dashboard/admin/audit", label: "Aktivitas Sistem", icon: ShieldCheck },
+        { href: "/dashboard/admin/announcements", label: "Informasi", icon: Megaphone },
         { href: "/dashboard/admin/research", label: "Permohonan Riset", icon: GraduationCap },
         { href: "/dashboard/ppid", label: "Permohonan PPID", icon: FileQuestion },
         { href: "/dashboard/pengaduan", label: "Pengaduan", icon: Megaphone },
@@ -78,42 +74,42 @@ export const DashboardSidebar = () => {
 
     if (role === "OFFICER") {
       return [
-        ...base,
-        { href: "/dashboard/admin/tax-objects", label: "Daftar Objek Pajak", icon: Building2 },
-        { href: "/dashboard/admin/sppt", label: "Penerbitan SPPT", icon: FileText },
-        { href: "/dashboard/admin/submissions", label: "Dokumentasi Pengajuan", icon: ShieldCheck },
-        { href: "/dashboard/admin/payments", label: "Monitoring Kas", icon: CreditCard },
-        { href: "/dashboard/admin/research", label: "Permohonan Riset", icon: GraduationCap },
-        { href: "/dashboard/ppid", label: "Permohonan PPID", icon: FileQuestion },
+        { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
+        { href: "/dashboard/admin/tax-objects", label: "Objek Pajak", icon: Building2 },
+        { href: "/dashboard/admin/sppt", label: "SPPT", icon: FileText },
+        { href: "/dashboard/admin/submissions", label: "Pengajuan", icon: ShieldCheck },
+        { href: "/dashboard/admin/payments", label: "Pembayaran", icon: CreditCard },
+        { href: "/dashboard/admin/research", label: "Riset", icon: GraduationCap },
+        { href: "/dashboard/ppid", label: "PPID", icon: FileQuestion },
         { href: "/dashboard/pengaduan", label: "Pengaduan", icon: Megaphone },
         // GIS Menu
         { href: "/dashboard/gis/peta-bidang", label: "Peta Bidang PBB", icon: Map },
         { href: "/dashboard/gis/znt", label: "Zona Nilai Tanah", icon: Layers },
         { href: "/dashboard/gis/pasar-properti", label: "Pasar Properti", icon: TrendingUp },
-        { href: "/dashboard/gis/pendataan", label: "Geo Pendataan", icon: MapPin },
-        { href: "/dashboard/gis/penilaian", label: "Geo Penilaian", icon: Scale },
+        { href: "/dashboard/gis/pendataan", label: "Pendataan Lapangan", icon: MapPin },
+        { href: "/dashboard/gis/penilaian", label: "Penilaian Objek", icon: Scale },
       ];
     }
 
     if (role === "MAHASISWA") {
       return [
-        ...base,
+        { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
         { href: "/dashboard/mahasiswa/pengajuan", label: "Status Riset", icon: GraduationCap },
         { href: "/dashboard/ppid", label: "Layanan PPID", icon: FileQuestion },
       ];
     }
 
     return [
-      ...base,
-      { href: "/dashboard/pajak/objek", label: "Objek Pajak", icon: Building2 },
-      { href: "/dashboard/pajak/sppt", label: "SPPT Digital", icon: FileText },
-      { href: "/dashboard/pengajuan", label: "Dokumentasi Pengajuan", icon: ShieldCheck },
-      { href: "/dashboard/pajak/riwayat", label: "Riwayat Bayar", icon: CreditCard },
-      { href: "/dashboard/pajak/hitung", label: "Simulasi Pajak", icon: Calculator },
-      { href: "/dashboard/ppid", label: "Layanan PPID", icon: FileQuestion },
-      { href: "/dashboard/pengaduan", label: "E-Pengaduan", icon: Megaphone },
+      { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
+      { href: "/dashboard/pajak/objek", label: "Aset Pajak", icon: Building2 },
+      { href: "/dashboard/pajak/sppt", label: "SPPT Saya", icon: FileText },
+      { href: "/dashboard/pengajuan", label: "Pengajuan", icon: ShieldCheck },
+      { href: "/dashboard/pajak/riwayat", label: "Riwayat Pembayaran", icon: CreditCard },
+      { href: "/dashboard/pajak/hitung", label: "Kalkulator Pajak", icon: Calculator },
+      { href: "/dashboard/ppid", label: "Informasi Publik", icon: FileQuestion },
+      { href: "/dashboard/pengaduan", label: "Pengaduan", icon: Megaphone },
       // GIS Menu
-      { href: "/dashboard/gis/peta-bidang", label: "Peta Bidang PBB", icon: Map },
+      { href: "/dashboard/gis/peta-bidang", label: "Lokasi Aset", icon: Map },
     ];
   };
 
@@ -191,7 +187,7 @@ export const DashboardSidebar = () => {
           </nav>
 
           <div className="mt-8 pt-8 border-t border-zinc-50 space-y-2">
-            <Link href={role === "ADMIN" ? "/dashboard/admin/settings" : "/dashboard/settings"} className="flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-zinc-500 hover:text-primary hover:bg-primary/5 transition-all uppercase tracking-tight italic"><Settings className="w-5 h-5" /> Settings</Link>
+            <Link href={role === "ADMIN" ? "/dashboard/admin/settings" : "/dashboard/settings"} className="flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-zinc-500 hover:text-primary hover:bg-primary/5 transition-all uppercase tracking-tight italic"><Settings className="w-5 h-5" /> Pengaturan</Link>
             <button onClick={() => signOut({ callbackUrl: "/" })} className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all uppercase tracking-tight italic"><LogOut className="w-5 h-5" /> Logout</button>
           </div>
         </div>
