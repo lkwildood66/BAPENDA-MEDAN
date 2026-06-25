@@ -60,9 +60,9 @@ export default function ProfilePage() {
         body: JSON.stringify({ name: form.name, phone: form.phone, address: form.address }),
       });
       if (!res.ok) throw new Error("Failed to update profile");
-      toast({ title: "Berhasil", description: "Profil berhasil diperbarui", type: "success" });
+      toast("Berhasil", "Profil berhasil diperbarui", "success");
     } catch (err) {
-      toast({ title: "Gagal", description: "Gagal memperbarui profil", type: "error" });
+      toast("Gagal", "Gagal memperbarui profil", "error");
     } finally {
       setSaving(false);
     }
@@ -70,11 +70,11 @@ export default function ProfilePage() {
 
   const handleChangePassword = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast({ title: "Error", description: "Konfirmasi password tidak cocok", type: "error" });
+      toast("Error", "Konfirmasi password tidak cocok", "error");
       return;
     }
     if (passwordForm.newPassword.length < 6) {
-      toast({ title: "Error", description: "Password minimal 6 karakter", type: "error" });
+      toast("Error", "Password minimal 6 karakter", "error");
       return;
     }
     setChangingPassword(true);
@@ -91,10 +91,10 @@ export default function ProfilePage() {
         const err = await res.json();
         throw new Error(err.error || "Gagal mengubah password");
       }
-      toast({ title: "Berhasil", description: "Password berhasil diubah", type: "success" });
+      toast("Berhasil", "Password berhasil diubah", "success");
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err: any) {
-      toast({ title: "Gagal", description: err.message, type: "error" });
+      toast("Gagal", err.message, "error");
     } finally {
       setChangingPassword(false);
     }
