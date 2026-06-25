@@ -12,10 +12,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useToast } from "@/lib/hooks/use-toast";
 import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -119,7 +121,7 @@ export default function LoginPage() {
                                type="email"
                                value={email}
                                onChange={(e) => setEmail(e.target.value)}
-                               placeholder="Email atau Username"
+                               placeholder="Email"
                                required
                                className="w-full pl-16 pr-8 h-16 bg-zinc-50 border border-zinc-200 rounded-[1.5rem] focus:ring-4 focus:ring-primary/10 focus:border-primary/30 outline-none transition-all font-black text-sm shadow-inner"
                             />
@@ -136,7 +138,7 @@ export default function LoginPage() {
                                required
                                className="w-full pl-16 pr-8 h-16 bg-zinc-50 border border-zinc-200 rounded-[1.5rem] focus:ring-4 focus:ring-primary/10 focus:border-primary/30 outline-none transition-all font-black text-sm tracking-widest shadow-inner"
                             />
-                            <Link href="#" className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-widest text-primary hover:underline italic z-10">Lupa Sandi?</Link>
+                            <button type="button" onClick={() => toast({ title: "Info", description: "Fitur reset password akan segera tersedia. Hubungi admin untuk bantuan.", type: "info" })} className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase tracking-widest text-primary hover:underline italic z-10 cursor-pointer">Lupa Sandi?</button>
                          </div>
                       </div>
                   </div>
