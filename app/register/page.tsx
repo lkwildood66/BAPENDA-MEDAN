@@ -76,9 +76,9 @@ export default function RegisterPage() {
 
         <div className="relative z-10 space-y-8">
           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-white/10 border border-white/20">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-               <Image src="/logo.png" alt="Logo" width={24} height={24} />
-            </div>
+             <div className="w-20 h-7 bg-white rounded-lg flex items-center justify-center">
+                <Image src="/logo.png" alt="Logo" width={64} height={19} className="object-contain" />
+             </div>
             <span className="text-sm font-bold text-white tracking-widest uppercase">SIPADA MEDAN</span>
           </div>
           <h1 className="text-6xl font-black tracking-tight text-white leading-tight">

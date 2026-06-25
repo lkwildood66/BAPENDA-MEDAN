@@ -225,9 +225,9 @@ export const DashboardSidebar = () => {
         <div className="h-full flex flex-col p-8">
           {/* Logo Section */}
           <div className="flex items-center gap-4 mb-8 px-2">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-md border border-zinc-100 group-hover:rotate-6 transition-transform">
-               <Image src="/logo.png" alt="Logo" width={40} height={40} className="object-contain" />
-            </div>
+             <div className="w-28 h-12 bg-white rounded-2xl flex items-center justify-center shadow-md border border-zinc-100 group-hover:rotate-6 transition-transform">
+                <Image src="/logo.png" alt="Logo" width={106} height={32} className="object-contain" />
+             </div>
             <div>
               <h2 className="text-xl font-black tracking-tighter text-foreground italic uppercase">Bapenda.<span className="text-[#1E40AF] italic">Hub</span></h2>
               <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest italic opacity-60 leading-none">Medan Digital Gov</p>

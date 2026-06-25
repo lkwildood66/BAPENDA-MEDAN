@@ -104,8 +104,8 @@ export default function Home() {
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white border border-zinc-200/80 m-4 md:m-6 rounded-2xl px-6 md:px-10 py-3.5 flex items-center justify-between shadow-sm">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-zinc-200">
-             <Image src="/logo.png" alt="Logo" width={32} height={32} className="object-contain" />
+          <div className="w-28 h-10 bg-white rounded-lg flex items-center justify-center border border-zinc-200">
+             <Image src="/logo.png" alt="Logo" width={106} height={32} className="object-contain" />
           </div>
           <div>
             <h1 className="text-sm font-bold tracking-tight leading-none text-foreground uppercase">BAPENDA <span className="text-primary">MEDAN</span></h1>
@@ -373,9 +373,9 @@ export default function Home() {
          <div className="bg-white border border-zinc-200 rounded-2xl p-8 md:p-12 shadow-sm text-left relative overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                <div className="space-y-6">
-                  <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center border border-zinc-200 shadow-sm">
-                     <Image src="/logo.png" alt="Logo" width={40} height={40} />
-                  </div>
+                   <div className="w-28 h-12 bg-white rounded-xl flex items-center justify-center border border-zinc-200 shadow-sm">
+                      <Image src="/logo.png" alt="Logo" width={106} height={32} className="object-contain" />
+                   </div>
                   <h2 className="text-3xl font-bold tracking-tight uppercase">Keamanan Data Terjamin</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                      Protokol keamanan standar industri serta enkripsi data memastikan seluruh data transaksi dan identitas wajib pajak terlindungi sepenuhnya secara digital.
@@ -386,7 +386,7 @@ export default function Home() {
                </div>
                <div className="relative flex justify-center lg:justify-end">
                   <div className="w-64 h-64 bg-slate-50 border border-zinc-200 shadow-sm rounded-xl p-8 flex flex-col items-center justify-center gap-4">
-                     <Image src="/logo.png" alt="Logo Medan" width={80} height={80} />
+                      <Image src="/logo.png" alt="Logo Medan" width={200} height={60} className="object-contain" />
                      <div className="text-center space-y-1">
                         <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">Sistem Informasi</p>
                         <p className="text-[10px] font-bold uppercase text-primary tracking-wider">Pendapatan Daerah</p>

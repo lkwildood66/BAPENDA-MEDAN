@@ -13,8 +13,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       {/* ── Navigation ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-morphism border-zinc-100 m-4 rounded-[2rem] px-8 py-4 flex items-center justify-between shadow-2xl shadow-primary/5 animate-in fade-in duration-1000">
         <Link href="/" className="flex items-center gap-4 group">
-          <div className="w-12 h-12 flex items-center justify-center scale-90 md:scale-110 transition-transform group-hover:scale-100">
-             <Image src="/logo.png" alt="BAPENDA" width={48} height={48} className="object-contain" />
+          <div className="w-28 h-12 flex items-center justify-center scale-90 md:scale-110 transition-transform group-hover:scale-100">
+             <Image src="/logo.png" alt="BAPENDA" width={106} height={32} className="object-contain" />
           </div>
           <div className="border-l-2 border-zinc-100 pl-4">
             <h1 className="text-sm font-black tracking-tighter leading-none uppercase">BAPENDA <span className="text-primary italic font-black">MEDAN</span></h1>

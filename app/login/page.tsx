@@ -57,9 +57,9 @@ export default function LoginPage() {
          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary opacity-5 rounded-full blur-[120px] animate-pulse-slow" />
          
          <Link href="/" className="flex items-center gap-4 relative z-10 group">
-            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-2xl border border-zinc-100 group-hover:rotate-6 transition-transform">
-               <Image src="/logo.png" alt="Logo" width={44} height={44} />
-            </div>
+             <div className="w-28 h-12 bg-white rounded-2xl flex items-center justify-center shadow-2xl border border-zinc-100 group-hover:rotate-6 transition-transform">
+                <Image src="/logo.png" alt="Logo" width={106} height={32} className="object-contain" />
+             </div>
             <div>
                <h1 className="text-2xl font-black italic tracking-tighter leading-none text-foreground uppercase">SIPADA<span className="text-primary italic font-black">MEDAN</span></h1>
                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mt-1 italic">Secure Gateway Node</p>
@@ -95,9 +95,9 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white relative">
          {/* Mobile Logo Only */}
          <div className="absolute top-12 left-12 lg:hidden flex items-center gap-4">
-            <div className="w-10 h-10 bg-white border border-zinc-100 rounded-xl flex items-center justify-center">
-               <Image src="/logo.png" alt="Logo" width={28} height={28} />
-            </div>
+             <div className="w-24 h-8 bg-white border border-zinc-100 rounded-xl flex items-center justify-center">
+                <Image src="/logo.png" alt="Logo" width={80} height={24} className="object-contain" />
+             </div>
             <h1 className="text-xl font-black italic tracking-tighter text-foreground">SIPADA<span className="text-primary italic">.</span></h1>
          </div>
 
