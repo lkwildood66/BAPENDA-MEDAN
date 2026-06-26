@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Scale, TrendingUp, TrendingDown, Clock, Search, HelpCircle, Save, Plus, ArrowUpRight, ArrowDownRight, Loader2 } from "lucide-react";
@@ -72,23 +72,16 @@ export default function GeoPenilaianPage() {
   const [analytics, setAnalytics] = useState<Analytics>({ topIncreases: [], topDecreases: [] });
   const [objects, setObjects] = useState<TaxObject[]>([]);
   const [loading, setLoading] = useState(true);
-
-  if (status === "loading" || ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER")) {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
-
-  // Form Fields
   const [selectedObj, setSelectedObj] = useState<TaxObject | null>(null);
   const [newNjopInput, setNewNjopInput] = useState("");
   const [reasonInput, setReasonInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const loadData = () => {
+  const loadData = useCallback(() => {
+    if (status !== "authenticated") return;
+    const role = (session?.user as any)?.role;
+    if (role !== "ADMIN" && role !== "OFFICER") return;
     Promise.all([
       fetch("/api/geodashboard/object-tax").then(res => res.json()),
       fetch("/api/gis/assessments").then(res => res.json())
@@ -103,11 +96,19 @@ export default function GeoPenilaianPage() {
         console.error(err);
         setLoading(false);
       });
-  };
+  }, [status, session]);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
+
+  if (status === "loading" || ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER")) {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   const handleAssessmentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

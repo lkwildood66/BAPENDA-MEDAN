@@ -18,7 +18,7 @@ export class TaxService {
 
       if (!taxObject) throw new Error("Nomor Objek Pajak tidak ditemukan.");
 
-      const pendingPayments = taxObject.payments.filter(p => p.status === 'PENDING');
+      const pendingPayments = taxObject.payments.filter(p => p.status === 'PENDING' || p.status === 'EXPIRED');
       const paidHistory = taxObject.payments.filter(p => p.status === 'PAID');
 
       return {

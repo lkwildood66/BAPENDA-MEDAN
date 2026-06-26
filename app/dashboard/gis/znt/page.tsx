@@ -46,15 +46,11 @@ export default function ZNTPage() {
   const [loading, setLoading] = useState(true);
   const [districtFilter, setDistrictFilter] = useState("");
 
-  if (status === "loading" || ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER")) {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
-
+  // Fetch data (runs once on mount, safe guard inside)
   useEffect(() => {
+    import("leaflet");
+    if (status !== "authenticated") return;
+    if ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER") return;
     fetch("/api/gis/znt")
       .then(res => res.json())
       .then(json => {
@@ -65,13 +61,12 @@ export default function ZNTPage() {
         console.error(err);
         setLoading(false);
       });
-  }, []);
+  }, [status, session]);
 
   const filteredZones = useMemo(() => {
     return zones.filter(z => districtFilter ? z.district.toLowerCase() === districtFilter.toLowerCase() : true);
   }, [zones, districtFilter]);
 
-  // Analytics
   const analytics = useMemo(() => {
     if (zones.length === 0) return { highest: null, lowest: null, averageNJOP: 0 };
     
@@ -85,17 +80,23 @@ export default function ZNTPage() {
     return { highest, lowest, averageNJOP };
   }, [zones]);
 
-  // Helper to determine polygon styling based on valuePerMeter
   const getZoneStyle = (val: number) => {
-    // scale colors: higher value = warmer color
     if (val >= 6000000) {
-      return { color: "#ef4444", fillColor: "#f87171" }; // Red
+      return { color: "#ef4444", fillColor: "#f87171" };
     } else if (val >= 4000000) {
-      return { color: "#f59e0b", fillColor: "#fbbf24" }; // Orange/Yellow
+      return { color: "#f59e0b", fillColor: "#fbbf24" };
     } else {
-      return { color: "#10b981", fillColor: "#34d399" }; // Green
+      return { color: "#10b981", fillColor: "#34d399" };
     }
   };
+
+  if (status === "loading" || ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER")) {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   if (loading) {
     return (

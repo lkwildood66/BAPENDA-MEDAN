@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { AuditService } from "@/lib/services/audit";
+import { NotificationService } from "@/lib/services/notification";
 
 function genRequestNumber() {
   const y = new Date().getFullYear();
@@ -59,6 +61,25 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
       },
     });
+
+    await AuditService.log({
+      userId: session.user.id,
+      action: "CREATE_RESEARCH_REQUEST",
+      table: "ResearchRequest",
+      recordId: request.id,
+      newValue: { requestNumber: request.requestNumber, title: request.title },
+    });
+
+    const admins = await prisma.user.findMany({ where: { role: { in: ["ADMIN", "OFFICER"] } }, select: { id: true } });
+    for (const admin of admins) {
+      await NotificationService.notify({
+        userId: admin.id,
+        title: "Riset Mahasiswa Baru",
+        message: `Permohonan riset "${request.title}" (${request.requestNumber}) telah diajukan oleh ${session.user.name || session.user.email}.`,
+        type: "INFO",
+        category: "DASHBOARD",
+      });
+    }
 
     return NextResponse.json({ success: true, request }, { status: 201 });
   } catch (error) {

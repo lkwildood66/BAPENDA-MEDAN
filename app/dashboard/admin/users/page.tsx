@@ -91,19 +91,14 @@ export default function AdminUsersPage() {
   const { toast } = useToast();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-
-  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("ALL");
-  const [filterStatus, setFilterStatus] = useState("ALL"); // ALL, ACTIVE, INACTIVE
-  const [filterPayment, setFilterPayment] = useState("ALL"); // ALL, LUNAS, MENUNGGAK
-  const [filterRegion, setFilterRegion] = useState("ALL"); // ALL, or Kecamatan
+  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterPayment, setFilterPayment] = useState("ALL");
+  const [filterRegion, setFilterRegion] = useState("ALL");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 20;
   
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   
@@ -125,17 +120,26 @@ export default function AdminUsersPage() {
   });
 
   const fetchUsers = useCallback(() => {
+    if (status !== "authenticated" || (session?.user as any)?.role !== "ADMIN") return;
     setLoading(true);
     fetch("/api/users")
       .then((r) => r.json())
       .then((d) => setUsers(d.users ?? []))
       .catch(() => toast("Gagal Sinkronisasi", "Sistem tidak dapat memanggil data identitas dari database pusat.", "error"))
       .finally(() => setLoading(false));
-  }, [toast]);
+  }, [toast, status, session]);
 
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   const validateNIK = (nik: string) => {
     if (!nik) return true; // optional in DB
@@ -263,6 +267,10 @@ export default function AdminUsersPage() {
     return hasArrears ? "MENUNGGAK" : "LUNAS";
   };
 
+  useEffect(() => {
+    setPage(1);
+  }, [search, filterRole, filterStatus, filterPayment, filterRegion]);
+
   const filtered = users.filter((u) => {
     const matchSearch =
       u.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -285,6 +293,9 @@ export default function AdminUsersPage() {
 
     return matchSearch && matchRole && matchStatus && matchPayment && matchRegion;
   });
+
+  const totalFilteredPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginatedUsers = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 pb-20 w-full text-left">
@@ -314,7 +325,7 @@ export default function AdminUsersPage() {
             <Card padding="lg" variant="outline" className="hidden xl:flex bg-zinc-50 border border-zinc-100 rounded-[2.5rem] shadow-inner py-4 px-8 min-w-[200px] text-right">
                <div className="space-y-1">
                   <p className="text-[10px] font-black uppercase text-zinc-400 tracking-[0.3em] italic leading-none">Total Nodes</p>
-                  <p className="text-2xl font-black italic tracking-tighter uppercase">{users.length} <span className="text-primary tracking-normal font-sans text-xs">Identities</span></p>
+                   <p className="text-2xl font-black italic tracking-tighter uppercase">{filtered.length} <span className="text-primary tracking-normal font-sans text-xs">Identities</span></p>
                </div>
             </Card>
         </div>
@@ -406,12 +417,12 @@ export default function AdminUsersPage() {
                     <tr>
                        <td colSpan={7} className="p-8"><div className="flex justify-center"><Loader2 className="w-8 h-8 text-primary animate-spin" /></div></td>
                     </tr>
-                 ) : filtered.length === 0 ? (
-                    <tr>
-                       <td colSpan={7} className="px-8 py-16 text-center text-zinc-300 italic font-bold">Void List — Tidak ada user ditemukan.</td>
-                    </tr>
-                 ) : (
-                    filtered.map((u) => {
+                  ) : paginatedUsers.length === 0 ? (
+                     <tr>
+                        <td colSpan={7} className="px-8 py-16 text-center text-zinc-300 italic font-bold">Void List — Tidak ada user ditemukan.</td>
+                     </tr>
+                  ) : (
+                     paginatedUsers.map((u) => {
                       const payStatus = getUserPaymentStatus(u);
                       return (
                         <tr key={u.id} className="hover:bg-zinc-50/30 transition-colors font-bold text-zinc-800">
@@ -496,8 +507,61 @@ export default function AdminUsersPage() {
                     })
                  )}
               </tbody>
-           </table>
-        </div>
+            </table>
+         </div>
+
+         {/* ── Pagination ── */}
+         {!loading && totalFilteredPages > 1 && (
+            <div className="flex items-center justify-between px-8 py-6 border-t border-zinc-100">
+               <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 italic">
+                  Menampilkan {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} dari {filtered.length} identitas
+               </p>
+               <div className="flex items-center gap-3">
+                  <button
+                     onClick={() => setPage(p => Math.max(1, p - 1))}
+                     disabled={page <= 1}
+                     className="px-6 py-3 rounded-full bg-zinc-50 border border-zinc-100 text-zinc-600 font-black text-[10px] uppercase tracking-widest hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  >
+                     Sebelumnya
+                  </button>
+                  <div className="flex items-center gap-1.5">
+                     {Array.from({ length: Math.min(totalFilteredPages, 7) }, (_, i) => {
+                        let pageNum: number;
+                        if (totalFilteredPages <= 7) {
+                           pageNum = i + 1;
+                        } else if (page <= 4) {
+                           pageNum = i + 1;
+                        } else if (page >= totalFilteredPages - 3) {
+                           pageNum = totalFilteredPages - 6 + i;
+                        } else {
+                           pageNum = page - 3 + i;
+                        }
+                        return (
+                           <button
+                              key={pageNum}
+                              onClick={() => setPage(pageNum)}
+                              className={cn(
+                                 "w-10 h-10 rounded-full text-[11px] font-black transition-all cursor-pointer",
+                                 page === pageNum
+                                    ? "bg-primary text-white shadow-lg shadow-primary/30"
+                                    : "text-zinc-400 hover:bg-zinc-50"
+                              )}
+                           >
+                              {pageNum}
+                           </button>
+                        );
+                     })}
+                  </div>
+                  <button
+                     onClick={() => setPage(p => Math.min(totalFilteredPages, p + 1))}
+                     disabled={page >= totalFilteredPages}
+                     className="px-6 py-3 rounded-full bg-zinc-50 border border-zinc-100 text-zinc-600 font-black text-[10px] uppercase tracking-widest hover:bg-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  >
+                     Selanjutnya
+                  </button>
+               </div>
+            </div>
+         )}
       </Card>
 
       {/* ── Create Modal ── */}

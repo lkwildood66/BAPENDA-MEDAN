@@ -9,11 +9,11 @@ import Image from "next/image";
 
 const ROLES = [
   { value: "USER", label: "Wajib Pajak", icon: User, desc: "Akses layanan pajak pribadi" },
-  { value: "DEVELOPER", label: "Mahasiswa / Peneliti", icon: GraduationCap, desc: "Akses untuk keperluan riset" },
+  { value: "MAHASISWA", label: "Mahasiswa / Peneliti", icon: GraduationCap, desc: "Akses untuk keperluan riset" },
 ] as const;
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ name: "", email: "", password: "", nik: "", phone: "", role: "USER" as "USER" | "DEVELOPER" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", nik: "", phone: "", role: "USER" as "USER" | "MAHASISWA" });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();

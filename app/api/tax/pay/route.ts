@@ -4,6 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 import { PaymentService } from "@/lib/services/payment";
+import { AuditService } from "@/lib/services/audit";
+import { NotificationService } from "@/lib/services/notification";
 
 // GET /api/tax/pay — list user payments
 export async function GET() {
@@ -33,7 +35,19 @@ export async function POST(req: NextRequest) {
     const { paymentId } = await req.json();
     if (!paymentId) return NextResponse.json({ error: "paymentId wajib diisi" }, { status: 400 });
 
+    const payment = await prisma.payment.findUnique({ where: { id: paymentId }, select: { userId: true, invoiceNumber: true } });
+    if (!payment) return NextResponse.json({ error: "Tagihan tidak ditemukan" }, { status: 404 });
+    if (payment.userId !== session.user.id) return NextResponse.json({ error: "Tagihan bukan milik Anda" }, { status: 403 });
+
     const token = await PaymentService.createSnapToken(paymentId);
+
+    await AuditService.log({
+      userId: session.user.id,
+      action: "INITIATE_PAYMENT",
+      table: "Payment",
+      recordId: paymentId,
+      newValue: { invoiceNumber: payment.invoiceNumber },
+    });
 
     return NextResponse.json({ 
       success: true, 

@@ -64,6 +64,7 @@ interface Announcement {
 export const UserDashboard = ({ session }: { session: Session }) => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [activeTagihan, setActiveTagihan] = useState<Payment[]>([]);
   const [spptCount, setSpptCount] = useState(0);
   const [submissionActiveCount, setSubmissionActiveCount] = useState(0);
   const [submissions, setSubmissions] = useState<TaxSubmission[]>([]);
@@ -80,8 +81,10 @@ export const UserDashboard = ({ session }: { session: Session }) => {
         const dData = await dRes.json();
         const nData = await nRes.json();
         
+        const activeTagihan = dData.activeTagihan || [];
         setAssets(dData.taxObjects || []);
         setPayments(dData.payments || []);
+        setActiveTagihan(activeTagihan);
         setSpptCount(dData.spptCount || 0);
         setSubmissionActiveCount(dData.submissionActiveCount || 0);
         setSubmissions(dData.submissions || []);
@@ -95,8 +98,7 @@ export const UserDashboard = ({ session }: { session: Session }) => {
     fetchData();
   }, []);
 
-  const totalPendingAmount = payments
-    .filter(p => p.status === "PENDING")
+  const totalPendingAmount = activeTagihan
     .reduce((sum, p) => sum + Number(p.amount), 0);
 
   const formatCurrency = (val: number) => {

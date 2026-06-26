@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { AuditService } from "@/lib/services/audit";
+import { NotificationService } from "@/lib/services/notification";
 
 function genTicket() {
   const y = new Date().getFullYear();
@@ -54,6 +56,25 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
       },
     });
+
+    await AuditService.log({
+      userId: session.user.id,
+      action: "CREATE_PPID_REQUEST",
+      table: "PPIDRequest",
+      recordId: request.id,
+      newValue: { ticketNumber: request.ticketNumber, title: request.title },
+    });
+
+    const admins = await prisma.user.findMany({ where: { role: { in: ["ADMIN", "OFFICER"] } }, select: { id: true } });
+    for (const admin of admins) {
+      await NotificationService.notify({
+        userId: admin.id,
+        title: "Permohonan PPID Baru",
+        message: `Permohonan informasi "${request.title}" (${request.ticketNumber}) telah diajukan.`,
+        type: "INFO",
+        category: "DASHBOARD",
+      });
+    }
 
     return NextResponse.json({ success: true, request }, { status: 201 });
   } catch (error) {

@@ -9,7 +9,7 @@ const RegisterSchema = z.object({
   password: z.string().min(8, "Password harus minimal 8 karakter"),
   nik: z.string().length(16, "NIK harus 16 digit").optional().or(z.literal("")),
   phone: z.string().optional(),
-  role: z.enum(["USER", "DEVELOPER"]).default("USER"),
+  role: z.enum(["USER", "MAHASISWA"]).default("USER"),
 });
 
 export async function POST(req: NextRequest) {

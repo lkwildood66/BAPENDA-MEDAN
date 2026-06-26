@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { 
@@ -34,14 +34,6 @@ export default function AnnouncementsAdminPage() {
   const { toast } = useToast();
   const [data, setData] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
-
-  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<Announcement | null>(null);
@@ -54,7 +46,8 @@ export default function AnnouncementsAdminPage() {
     isActive: true,
   });
 
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = useCallback(async () => {
+    if (status !== "authenticated" || (session?.user as any)?.role !== "ADMIN") return;
     setLoading(true);
     try {
       const res = await fetch("/api/announcements");
@@ -66,11 +59,19 @@ export default function AnnouncementsAdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [status, session, toast]);
 
   useEffect(() => {
     fetchAnnouncements();
-  }, []);
+  }, [fetchAnnouncements]);
+
+  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   const handleToggleStatus = async (item: Announcement) => {
     try {

@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { AuditService } from "@/lib/services/audit";
+import { NotificationService } from "@/lib/services/notification";
 
 function genTicket() {
   const y = new Date().getFullYear();
@@ -55,6 +57,25 @@ export async function POST(req: NextRequest) {
         userId: session.user.id,
       },
     });
+
+    await AuditService.log({
+      userId: session.user.id,
+      action: "CREATE_COMPLAINT",
+      table: "Complaint",
+      recordId: complaint.id,
+      newValue: { ticketNumber: complaint.ticketNumber, subject: complaint.subject },
+    });
+
+    const admins = await prisma.user.findMany({ where: { role: { in: ["ADMIN", "OFFICER"] } }, select: { id: true } });
+    for (const admin of admins) {
+      await NotificationService.notify({
+        userId: admin.id,
+        title: "Pengaduan Baru",
+        message: `Pengaduan "${complaint.subject}" (${complaint.ticketNumber}) telah masuk dengan prioritas ${complaint.priority}.`,
+        type: "WARNING",
+        category: "DASHBOARD",
+      });
+    }
 
     return NextResponse.json({ success: true, complaint }, { status: 201 });
   } catch (error) {

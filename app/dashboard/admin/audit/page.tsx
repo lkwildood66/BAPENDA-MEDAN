@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { 
@@ -47,14 +47,6 @@ export default function AuditLogPage() {
 
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
-
-  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [limit] = useState(20);
@@ -66,7 +58,7 @@ export default function AuditLogPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -91,12 +83,20 @@ export default function AuditLogPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, page, userId, table, action, startDate, endDate]);
 
   useEffect(() => {
+    if (status !== "authenticated" || (session?.user as any)?.role !== "ADMIN") return;
     fetchLogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, table, action]); // Auto-refresh on simple filters
+  }, [fetchLogs, status, session]);
+
+  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

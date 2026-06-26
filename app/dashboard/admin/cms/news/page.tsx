@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Plus, Search, FileText, Trash2, Edit, CheckCircle, XCircle, Loader2, X, ChevronDown } from "lucide-react";
@@ -30,14 +30,6 @@ export default function AdminNewsPage() {
   const { toast } = useToast();
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
-
-  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,11 +43,8 @@ export default function AdminNewsPage() {
     isActive: true,
   });
 
-  useEffect(() => {
-    fetchNews();
-  }, []);
-
-  const fetchNews = async () => {
+  const fetchNews = useCallback(async () => {
+    if (status !== "authenticated" || (session?.user as any)?.role !== "ADMIN") return;
     setLoading(true);
     try {
       const res = await fetch("/api/cms/news");
@@ -67,7 +56,19 @@ export default function AdminNewsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [status, session, toast]);
+
+  useEffect(() => {
+    fetchNews();
+  }, [fetchNews]);
+
+  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   const handleEdit = (item: NewsItem) => {
     setEditingItem(item);

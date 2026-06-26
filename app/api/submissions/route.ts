@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { AuditService } from "@/lib/services/audit";
+import { NotificationService } from "@/lib/services/notification";
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,12 +16,16 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get("type") || undefined;
     const status = searchParams.get("status") || undefined;
     const search = searchParams.get("search") || "";
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(100, Math.max(5, parseInt(searchParams.get("limit") || "20")));
+    const skip = (page - 1) * limit;
 
     let whereClause: any = {};
 
-    // Filter by role
     if (session.user.role === "USER" || session.user.role === "MAHASISWA") {
       whereClause.userId = session.user.id;
+    } else if (!["ADMIN", "DEVELOPER", "OFFICER"].includes(session.user.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     if (type) {
@@ -40,23 +45,28 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    const submissions = await prisma.taxSubmission.findMany({
-      where: whereClause,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            nik: true,
-            phone: true,
+    const [submissions, total] = await Promise.all([
+      prisma.taxSubmission.findMany({
+        where: whereClause,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              nik: true,
+              phone: true,
+            },
           },
         },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.taxSubmission.count({ where: whereClause }),
+    ]);
 
-    return NextResponse.json(submissions);
+    return NextResponse.json({ submissions, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
   } catch (error) {
     console.error("[SUBMISSIONS_GET_ERROR]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -108,6 +118,17 @@ export async function POST(req: NextRequest) {
         title,
       },
     });
+
+    const admins = await prisma.user.findMany({ where: { role: { in: ["ADMIN", "OFFICER"] } }, select: { id: true } });
+    for (const admin of admins) {
+      await NotificationService.notify({
+        userId: admin.id,
+        title: "Pengajuan Baru",
+        message: `Pengajuan ${type} "${title}" (${ticketNumber}) telah diterima.`,
+        type: "INFO",
+        category: "DASHBOARD",
+      });
+    }
 
     return NextResponse.json(submission);
   } catch (error) {

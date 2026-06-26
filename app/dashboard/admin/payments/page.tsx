@@ -20,8 +20,10 @@ interface Payment {
   taxObject: { nop: string; name: string; type: string };
 }
 
-function formatCurrency(val: number) {
-  return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(val);
+function formatCurrency(val: number | string) {
+  const num = typeof val === "string" ? Number(val) : val;
+  if (isNaN(num)) return "Rp 0";
+  return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(num);
 }
 
 const statusColor: Record<string, string> = {
@@ -57,7 +59,9 @@ export default function AdminPaymentsPage() {
     return matchSearch && matchStatus;
   });
 
-  const totalAmount = filtered.filter(p => p.status === "PAID").reduce((a, b) => a + b.amount, 0);
+  const totalAmount = filtered
+    .filter(p => p.status === "PAID")
+    .reduce((sum, p) => sum + Number(p.amount), 0);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -70,10 +74,25 @@ export default function AdminPaymentsPage() {
           <p className="text-muted-foreground mt-2 font-medium">Pengawasan pembayaran Pajak Daerah Kota Medan secara real-time dan terintegrasi.</p>
         </div>
         <div className="flex gap-4">
-           <Button variant="outline" size="lg" className="gap-2 group overflow-hidden relative">
-              <Download className="w-5 h-5 group-hover:translate-y-1 transition-transform" /> Ekspor Laporan Excel
-           </Button>
-        </div>
+            <Button
+              variant="outline" size="lg" className="gap-2 group overflow-hidden relative"
+              onClick={() => {
+                const headers = ["Invoice", "Wajib Pajak", "NOP", "Jenis", "Jumlah", "Status", "Tanggal"];
+                const rows = payments.map(p => [
+                  p.invoiceNumber, p.user.name, p.taxObject.nop, p.taxObject.type,
+                  p.amount.toString(), p.status, new Date(p.createdAt).toLocaleDateString("id-ID")
+                ]);
+                const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(",")).join("\r\n");
+                const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;?" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a"); a.href = url; a.download = `laporan-pembayaran-${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                toast("Berhasil", "Laporan berhasil diexport.", "success");
+              }}
+            >
+               <Download className="w-5 h-5 group-hover:translate-y-1 transition-transform" /> Ekspor Laporan Excel
+            </Button>
+         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

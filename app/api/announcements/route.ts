@@ -3,12 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { AuditService } from "@/lib/services/audit";
+import { NotificationService } from "@/lib/services/notification";
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    // Announcements are public, but for the admin dashboard list we might want more detail or all items
+    const isAdmin = session?.user && ["ADMIN", "OFFICER"].includes(session.user.role);
     const announcements = await prisma.announcement.findMany({
+      where: isAdmin ? {} : { isActive: true },
       orderBy: { createdAt: "desc" },
       include: { author: { select: { name: true } } },
     });
@@ -48,6 +50,17 @@ export async function POST(req: Request) {
       recordId: announcement.id,
       newValue: announcement,
     });
+
+    const users = await prisma.user.findMany({ where: { isActive: true, role: { in: ["USER", "MAHASISWA"] } }, select: { id: true } });
+    for (const u of users) {
+      await NotificationService.notify({
+        userId: u.id,
+        title: `Pengumuman: ${announcement.title}`,
+        message: announcement.content.substring(0, 120) + "...",
+        type: "INFO",
+        category: "DASHBOARD",
+      });
+    }
 
     return NextResponse.json(announcement);
   } catch (error) {

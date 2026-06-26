@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { AuditService } from "@/lib/services/audit";
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 const MAX_MESSAGE_LENGTH = 1000;
@@ -124,9 +125,9 @@ async function officerStats(userId: string) {
 
 async function wpTagihan(userId: string): Promise<BotReply> {
   const pending = await prisma.payment.findMany({
-    where: { userId, status: "PENDING" },
+    where: { userId, status: { in: ["PENDING", "EXPIRED"] } },
     include: { taxObject: true },
-    take: 5,
+    take: 10,
     orderBy: { expiredAt: "asc" },
   });
   if (pending.length === 0) {
@@ -803,6 +804,16 @@ export async function POST(req: NextRequest) {
     const botMsg = await prisma.chatMessage.create({
       data: { userId, role, message: reply.message, sender: "BOT" },
     });
+
+    if (userId) {
+      await AuditService.log({
+        userId,
+        action: "CHATBOT_QUERY",
+        table: "ChatMessage",
+        recordId: botMsg.id,
+        newValue: { query: safeMessage.substring(0, 200) },
+      });
+    }
 
     return NextResponse.json({
       success: true,

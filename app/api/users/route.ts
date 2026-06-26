@@ -5,56 +5,98 @@ import { authOptions } from "@/lib/auth";
 import { AuditService } from "@/lib/services/audit";
 import bcrypt from "bcryptjs";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user || !["ADMIN", "DEVELOPER", "OFFICER"].includes(session.user.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        nik: true,
-        phone: true,
-        address: true,
-        isActive: true,
-        createdAt: true,
-        _count: { select: { taxObjects: true, payments: true } },
-        payments: {
-          select: {
-            id: true,
-            amount: true,
-            status: true,
-            createdAt: true,
-            taxObject: {
-              select: {
-                name: true,
-                nop: true
+    const url = new URL(req.url);
+    const hasPagination = url.searchParams.has("page") || url.searchParams.has("pageSize");
+    const page = Math.max(1, parseInt(url.searchParams.get("page") || "1"));
+    const pageSize = hasPagination ? Math.min(100, Math.max(1, parseInt(url.searchParams.get("pageSize") || "20"))) : 1000;
+    const search = url.searchParams.get("search") || "";
+    const role = url.searchParams.get("role") || "";
+    const status = url.searchParams.get("status") || "";
+    const region = url.searchParams.get("region") || "";
+
+    const where: Record<string, unknown> = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { nik: { contains: search } },
+      ];
+    }
+
+    if (role && ["USER", "OFFICER", "ADMIN", "MAHASISWA", "DEVELOPER"].includes(role)) {
+      where.role = role;
+    }
+
+    if (status === "ACTIVE") where.isActive = true;
+    else if (status === "INACTIVE") where.isActive = false;
+
+    if (region) {
+      where.address = { contains: region, mode: "insensitive" };
+    }
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          nik: true,
+          phone: true,
+          address: true,
+          isActive: true,
+          createdAt: true,
+          _count: { select: { taxObjects: true, payments: true } },
+          payments: {
+            select: {
+              id: true,
+              amount: true,
+              status: true,
+              createdAt: true,
+              taxObject: {
+                select: {
+                  name: true,
+                  nop: true
+                }
               }
+            }
+          },
+          auditLogs: {
+            take: 10,
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              action: true,
+              table: true,
+              createdAt: true,
+              oldValue: true,
+              newValue: true
             }
           }
         },
-        auditLogs: {
-          take: 10,
-          orderBy: { createdAt: "desc" },
-          select: {
-            id: true,
-            action: true,
-            table: true,
-            createdAt: true,
-            oldValue: true,
-            newValue: true
-          }
-        }
-      },
-    });
+      }),
+      prisma.user.count({ where }),
+    ]);
 
-    return NextResponse.json({ users });
+    return NextResponse.json({
+      users,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    });
   } catch (error) {
     console.error("[USERS_GET_ERROR]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

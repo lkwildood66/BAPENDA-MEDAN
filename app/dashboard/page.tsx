@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     return <OfficerDashboard session={session} />;
   }
 
-  if (role === "MAHASISWA" || role === "DEVELOPER") {
+  if (role === "MAHASISWA") {
     return <MahasiswaDashboard session={session} />;
   }
 

@@ -70,18 +70,7 @@ export default function GeoPendataanPage() {
   const [objects, setObjects] = useState<TaxObject[]>([]);
   const [stats, setStats] = useState<Stats>({ verified: 0, pending: 0, rejected: 0, newAdded: 0, recentActivity: [] });
   const [loading, setLoading] = useState(true);
-
-  if (status === "loading" || ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER")) {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
-
   const [selectedObj, setSelectedObj] = useState<TaxObject | null>(null);
-  
-  // Form fields
   const [newStatus, setNewStatus] = useState("VERIFIED");
   const [latInput, setLatInput] = useState("");
   const [lngInput, setLngInput] = useState("");
@@ -90,6 +79,14 @@ export default function GeoPendataanPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const [icons, setIcons] = useState<Record<string, DivIcon>>({});
+
+  if (status === "loading" || ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER")) {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   const loadData = () => {
     Promise.all([
@@ -136,8 +133,8 @@ export default function GeoPendataanPage() {
   const selectObjectForSurvey = (obj: TaxObject) => {
     setSelectedObj(obj);
     setNewStatus(obj.status === "ACTIVE" ? "VERIFIED" : obj.status);
-    setLatInput(String(obj.lat || 3.595));
-    setLngInput(String(obj.lng || 98.672));
+    setLatInput(String(obj.lat ?? 3.595));
+    setLngInput(String(obj.lng ?? 98.672));
     setNoteInput("");
     setImageUrl("");
   };
@@ -255,8 +252,8 @@ export default function GeoPendataanPage() {
               />
 
               {objects.map(o => {
-                const latVal = o.lat || 3.595;
-                const lngVal = o.lng || 98.672;
+                const latVal = o.lat ?? 3.595;
+                const lngVal = o.lng ?? 98.672;
                 const objIcon = icons[o.status] || icons.PENDING;
 
                 return (

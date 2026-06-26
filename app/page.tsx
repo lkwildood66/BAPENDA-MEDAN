@@ -21,6 +21,9 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useToast } from "@/lib/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
+
+const MapVisualization = dynamic(() => import("@/components/landing/MapVisualization").then(m => m.MapVisualization), { ssr: false });
 
 interface NewsItem {
   id: string;
@@ -366,6 +369,19 @@ export default function Home() {
                </Card>
             ))}
          </div>
+      </section>
+
+      {/* ── Map Section ── */}
+      <section id="map" className="container mx-auto px-6 py-16 scroll-mt-24">
+         <div className="space-y-6 mb-10">
+            <div className="flex items-center gap-2 text-primary">
+               <div className="w-6 h-0.5 bg-primary rounded-full" />
+               <p className="text-[10px] font-bold uppercase tracking-widest leading-none">Peta Sebaran</p>
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight uppercase">Lokasi & Zona Pajak Daerah</h2>
+            <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">Visualisasi sebaran objek pajak, zona nilai tanah (ZNT), dan properti pasar di wilayah Kota Medan.</p>
+         </div>
+         <MapVisualization />
       </section>
 
       {/* ── Call to Action Section ── */}

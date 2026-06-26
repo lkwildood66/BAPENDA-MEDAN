@@ -91,7 +91,7 @@ export const OfficerDashboard = ({ session }: { session: Session }) => {
         if (statsData.stats) {
           setStats({
             pendingVerificationObjects: Number(statsData.stats.pendingVerificationObjects || 0),
-            newSubmissions: Number(statsData.stats.newSubmissions || 0),
+            newSubmissions: Number(statsData.stats.pendingTaxSubmissions || statsData.stats.newSubmissions || 0),
             inProgressSubmissions: Number(statsData.stats.inProgressSubmissions || 0),
             fieldTasksToday: Number(statsData.stats.fieldTasksToday || 0),
           });

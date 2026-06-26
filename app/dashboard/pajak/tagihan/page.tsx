@@ -54,7 +54,7 @@ export default function TagihanPajakPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const pending = payments.filter((p) => p.status === "PENDING");
+  const pending = payments.filter((p) => p.status === "PENDING" || p.status === "EXPIRED");
   const filtered = nopSearch
     ? pending.filter((p) =>
       p.taxObject.nop.includes(nopSearch) || p.taxObject.name.toLowerCase().includes(nopSearch.toLowerCase())

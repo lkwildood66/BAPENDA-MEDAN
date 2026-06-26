@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
 
     // USER / DEVELOPER (student)
     const userId = session.user.id;
-    const [myObjects, myPayments, spptCount, submissionActiveCount, mySubmissions] = await Promise.all([
+    const [myObjects, myPayments, activeTagihan, spptCount, submissionActiveCount, mySubmissions] = await Promise.all([
       prisma.taxObject.findMany({
         where: { ownerId: userId },
         include: { payments: { take: 3, orderBy: { createdAt: "desc" } } },
@@ -66,6 +66,11 @@ export async function GET(req: NextRequest) {
       prisma.payment.findMany({
         where: { userId },
         take: 10,
+        orderBy: { createdAt: "desc" },
+        include: { taxObject: { select: { nop: true, type: true, name: true } } },
+      }),
+      prisma.payment.findMany({
+        where: { userId, status: { in: ["PENDING", "EXPIRED"] } },
         orderBy: { createdAt: "desc" },
         include: { taxObject: { select: { nop: true, type: true, name: true } } },
       }),
@@ -86,6 +91,7 @@ export async function GET(req: NextRequest) {
       role, 
       taxObjects: myObjects, 
       payments: myPayments,
+      activeTagihan,
       spptCount,
       submissionActiveCount,
       submissions: mySubmissions

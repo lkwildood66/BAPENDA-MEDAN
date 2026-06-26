@@ -39,14 +39,6 @@ export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("SYSTEM");
   const [saving, setSaving] = useState(false);
 
-  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
-     return (
-        <div className="min-h-[60vh] flex items-center justify-center">
-           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
-        </div>
-     );
-  }
-
   // System Configuration State
   const [sysConfig, setSysConfig] = useState({
     appName: "SIPADA MEDAN - Sistem Pendapatan Daerah",
@@ -103,6 +95,14 @@ export default function AdminSettingsPage() {
     { id: "TAX", label: "Parameter Fiskal", icon: Coins },
     { id: "NOTIFICATION", label: "Notifikasi & Alert", icon: Bell },
   ] as const;
+
+  if (status === "loading" || (session?.user as any)?.role !== "ADMIN") {
+     return (
+        <div className="min-h-[60vh] flex items-center justify-center">
+           <Loader2 className="w-12 h-12 text-[#1E40AF] animate-spin" />
+        </div>
+     );
+  }
 
   return (
     <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-1000 pb-20 selection:bg-primary/20 text-left">

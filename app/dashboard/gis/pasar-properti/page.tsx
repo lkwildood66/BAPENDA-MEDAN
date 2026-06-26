@@ -56,6 +56,8 @@ export default function PasarPropertiPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [stats, setStats] = useState<Stats>({ avgMarketPrice: 0, avgNJOP: 0, pctDiff: 0 });
   const [loading, setLoading] = useState(true);
+  const [typeFilter, setTypeFilter] = useState("");
+  const [customIcon, setCustomIcon] = useState<DivIcon | undefined>(undefined);
 
   if (status === "loading" || ((session?.user as any)?.role !== "ADMIN" && (session?.user as any)?.role !== "OFFICER")) {
      return (
@@ -64,9 +66,6 @@ export default function PasarPropertiPage() {
         </div>
      );
   }
-  
-  const [typeFilter, setTypeFilter] = useState("");
-  const [customIcon, setCustomIcon] = useState<DivIcon | undefined>(undefined);
 
   useEffect(() => {
     import("leaflet").then((L) => {

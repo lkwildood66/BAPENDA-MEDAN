@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { createSlug } from "@/lib/utils";
 import { AuditService } from "./audit";
+import { NotificationService } from "./notification";
 
 export class CMSService {
   /**
@@ -35,6 +36,17 @@ export class CMSService {
       recordId: news.id,
       newValue: news,
     });
+
+    const users = await prisma.user.findMany({ where: { isActive: true }, select: { id: true } });
+    for (const u of users) {
+      await NotificationService.notify({
+        userId: u.id,
+        title: `Berita Baru: ${news.title}`,
+        message: news.summary || news.content.substring(0, 120) + "...",
+        type: "INFO",
+        category: "DASHBOARD",
+      });
+    }
 
     return news;
   }
@@ -104,6 +116,17 @@ export class CMSService {
       recordId: announcement.id,
       newValue: announcement,
     });
+
+    const users = await prisma.user.findMany({ where: { isActive: true }, select: { id: true } });
+    for (const u of users) {
+      await NotificationService.notify({
+        userId: u.id,
+        title: `Pengumuman: ${announcement.title}`,
+        message: announcement.content.substring(0, 120) + "...",
+        type: "INFO",
+        category: "DASHBOARD",
+      });
+    }
 
     return announcement;
   }

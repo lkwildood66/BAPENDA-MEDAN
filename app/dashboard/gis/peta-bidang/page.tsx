@@ -237,9 +237,12 @@ export default function PetaBidangPage() {
             />
             
             {filtered.map(o => {
-              const latVal = o.lat || 3.595;
-              const lngVal = o.lng || 98.672;
-              const polyData = o.locations?.polygonData ? JSON.parse(o.locations.polygonData) : null;
+              const latVal = o.lat ?? 3.595;
+              const lngVal = o.lng ?? 98.672;
+              let polyData = null;
+              try {
+                polyData = o.locations?.polygonData ? JSON.parse(o.locations.polygonData) : null;
+              } catch { polyData = null; }
               const polyColor = o.paymentStatus === "PAID" ? "#10b981" : (o.paymentStatus === "PENDING" ? "#f59e0b" : "#ef4444");
 
               return (
