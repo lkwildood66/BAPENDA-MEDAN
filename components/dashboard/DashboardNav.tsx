@@ -304,7 +304,7 @@ export const DashboardSidebar = () => {
           <div className="mt-6 pt-6 border-t border-zinc-150 space-y-1">
             <Link href="/dashboard/profile" className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-sm font-bold text-zinc-500 hover:text-[#1E40AF] hover:bg-[#1E40AF]/5 transition-all uppercase tracking-tight italic"><UserIcon className="w-5 h-5 text-zinc-400 hover:text-[#1E40AF]" /> Profil</Link>
             <Link href={role === "ADMIN" ? "/dashboard/admin/settings" : "/dashboard/settings"} className="flex items-center gap-4 px-6 py-3.5 rounded-2xl text-sm font-bold text-zinc-500 hover:text-[#1E40AF] hover:bg-[#1E40AF]/5 transition-all uppercase tracking-tight italic"><Settings className="w-5 h-5 text-zinc-400 hover:text-[#1E40AF]" /> Pengaturan</Link>
-            <button onClick={() => signOut({ callbackUrl: "/" })} className="w-full flex items-center gap-4 px-6 py-3.5 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all uppercase tracking-tight italic cursor-pointer"><LogOut className="w-5 h-5 text-red-400" /> Logout</button>
+            <button onClick={() => signOut({ callbackUrl: window.location.origin })} className="w-full flex items-center gap-4 px-6 py-3.5 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all uppercase tracking-tight italic cursor-pointer"><LogOut className="w-5 h-5 text-red-400" /> Logout</button>
           </div>
         </div>
       </aside>
@@ -408,11 +408,11 @@ export const DashboardTopbar = () => {
                       <div className="border-t border-zinc-100 my-2" />
 
                       <button 
-                         onClick={() => {
-                            setDropdownOpen(false);
-                            signOut({ callbackUrl: "/" });
-                         }}
-                         className="w-full flex items-center gap-3 px-6 py-3 text-xs font-black text-red-500 hover:bg-red-50 transition-all uppercase tracking-tight italic text-left cursor-pointer"
+                          onClick={() => {
+                             setDropdownOpen(false);
+                             signOut({ callbackUrl: window.location.origin });
+                          }}
+                          className="w-full flex items-center gap-3 px-6 py-3 text-xs font-black text-red-500 hover:bg-red-50 transition-all uppercase tracking-tight italic text-left cursor-pointer"
                       >
                          <LogOut className="w-4.5 h-4.5 text-red-400" />
                          Logout / Keluar
