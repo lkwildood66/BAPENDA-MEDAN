@@ -60,7 +60,7 @@ export default function UserSubmissionsPage() {
       const res = await fetch("/api/submissions");
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setSubmissions(data || []);
+      setSubmissions(data.submissions || []);
     } catch {
       toast("Error", "Gagal memuat riwayat pengajuan.", "error");
     } finally {
